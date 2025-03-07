@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.esgi.todoapp.domain.model.Task
 import com.esgi.todoapp.presentation.components.AddEditTaskDialog
+import com.esgi.todoapp.presentation.components.SearchBar
 import com.esgi.todoapp.presentation.components.TagSelector
 import com.esgi.todoapp.presentation.components.TaskItem
 import com.esgi.todoapp.presentation.components.ThemeToggle
@@ -45,18 +46,17 @@ fun TaskListScreen(
     onThemeToggle: () -> Unit
 ) {
     val tasks by viewModel.tasks.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
     val selectedTag by tagViewModel.selectedTag.collectAsState()
     val availableTags by tagViewModel.availableTags.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var editingTask by remember { mutableStateOf<Task?>(null) }
     var showDeleteConfirmation by remember { mutableStateOf(false) }
 
-    // Update available tags whenever tasks change
     LaunchedEffect(tasks) {
         tagViewModel.updateAvailableTags(tasks)
     }
 
-    // Filter tasks based on selected tag
     val filteredTasks = if (selectedTag != null) {
         tasks.filter { task -> selectedTag in task.tags }
     } else {
@@ -68,13 +68,11 @@ fun TaskListScreen(
             TopAppBar(
                 title = { Text(text = "To-Do App") },
                 actions = {
-                    // Theme toggle button
                     ThemeToggle(
                         isDarkTheme = isDarkTheme,
                         onToggle = onThemeToggle
                     )
 
-                    // Delete all tasks button
                     IconButton(
                         onClick = { if (tasks.isNotEmpty()) showDeleteConfirmation = true },
                         enabled = tasks.isNotEmpty()
@@ -101,7 +99,11 @@ fun TaskListScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Add TagSelector if we have tags
+            SearchBar(
+                query = searchQuery,
+                onQueryChange = { viewModel.updateSearchQuery(it) }
+            )
+
             if (availableTags.isNotEmpty()) {
                 TagSelector(
                     tags = availableTags,
@@ -118,10 +120,15 @@ fun TaskListScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (selectedTag != null && tasks.isNotEmpty())
-                            "Aucune tâche avec le tag '$selectedTag'"
-                        else
-                            "Aucune tâche"
+                        text = when {
+                            searchQuery.isNotBlank() && selectedTag != null ->
+                                "Aucune tâche avec le tag '$selectedTag' et contenant '$searchQuery'"
+                            searchQuery.isNotBlank() ->
+                                "Aucune tâche contenant '$searchQuery'"
+                            selectedTag != null && tasks.isNotEmpty() ->
+                                "Aucune tâche avec le tag '$selectedTag'"
+                            else -> "Aucune tâche"
+                        }
                     )
                 }
             } else {
@@ -142,7 +149,6 @@ fun TaskListScreen(
             }
         }
 
-        // Add task dialog
         if (showAddDialog) {
             AddEditTaskDialog(
                 onDismiss = { showAddDialog = false },
@@ -154,7 +160,6 @@ fun TaskListScreen(
             )
         }
 
-        // Edit task dialog
         editingTask?.let { task ->
             AddEditTaskDialog(
                 task = task,
@@ -167,7 +172,6 @@ fun TaskListScreen(
             )
         }
 
-        // Delete all confirmation dialog
         if (showDeleteConfirmation) {
             AlertDialog(
                 onDismissRequest = { showDeleteConfirmation = false },

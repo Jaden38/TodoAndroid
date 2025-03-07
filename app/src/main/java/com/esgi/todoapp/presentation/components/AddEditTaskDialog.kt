@@ -45,7 +45,6 @@ fun AddEditTaskDialog(
     var description by remember { mutableStateOf(task?.description ?: "") }
     var newTag by remember { mutableStateOf("") }
 
-    // Initialize tags safely
     val initialTags = remember {
         if (task != null && task.tags.isNotEmpty()) {
             task.tags
@@ -85,7 +84,6 @@ fun AddEditTaskDialog(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Current tags
                 if (tags.isNotEmpty()) {
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
@@ -97,7 +95,7 @@ fun AddEditTaskDialog(
                                 tag = tag,
                                 isSelected = true,
                                 onClick = {
-                                    // Create a copy to avoid ConcurrentModificationException
+
                                     val tagToRemove = tag
                                     tags.remove(tagToRemove)
                                 }
@@ -108,7 +106,6 @@ fun AddEditTaskDialog(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                // Suggested tags (from existing tasks)
                 val filteredAvailableTags = availableTags.filter { it !in tags }
                 if (filteredAvailableTags.isNotEmpty()) {
                     Text(
@@ -130,11 +127,9 @@ fun AddEditTaskDialog(
                             )
                         }
                     }
-
                     Spacer(modifier = Modifier.height(8.dp))
                 }
 
-                // Add new tag input
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()

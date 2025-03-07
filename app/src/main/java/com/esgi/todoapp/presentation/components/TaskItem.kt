@@ -75,7 +75,6 @@ fun TaskItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            // Display tags if present
             if (task.tags.isNotEmpty()) {
                 FlowRow(
                     modifier = Modifier

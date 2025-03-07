@@ -8,12 +8,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,6 +42,7 @@ fun TaskListScreen(
     val tasks by viewModel.tasks.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var editingTask by remember { mutableStateOf<Task?>(null) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -52,7 +56,10 @@ fun TaskListScreen(
                     )
 
                     // Delete all tasks button
-                    IconButton(onClick = { viewModel.deleteAllTasks() }) {
+                    IconButton(
+                        onClick = { if (tasks.isNotEmpty()) showDeleteConfirmation = true },
+                        enabled = tasks.isNotEmpty()
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Supprimer tout"
@@ -95,6 +102,7 @@ fun TaskListScreen(
             }
         }
 
+        // Add task dialog
         if (showAddDialog) {
             AddEditTaskDialog(
                 onDismiss = { showAddDialog = false },
@@ -105,6 +113,7 @@ fun TaskListScreen(
             )
         }
 
+        // Edit task dialog
         editingTask?.let { task ->
             AddEditTaskDialog(
                 task = task,
@@ -112,6 +121,30 @@ fun TaskListScreen(
                 onConfirm = { updatedTask ->
                     viewModel.updateTask(updatedTask)
                     editingTask = null
+                }
+            )
+        }
+
+        // Delete all confirmation dialog
+        if (showDeleteConfirmation) {
+            AlertDialog(
+                onDismissRequest = { showDeleteConfirmation = false },
+                title = { Text("Attention") },
+                text = { Text("Êtes-vous sûr de vouloir supprimer toutes les tâches ? Cette action est irréversible.") },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.deleteAllTasks()
+                            showDeleteConfirmation = false
+                        }
+                    ) {
+                        Text("Confirmer")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteConfirmation = false }) {
+                        Text("Annuler")
+                    }
                 }
             )
         }

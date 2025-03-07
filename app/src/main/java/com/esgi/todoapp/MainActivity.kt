@@ -7,10 +7,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.esgi.todoapp.presentation.screens.TaskListScreen
 import com.esgi.todoapp.presentation.viewmodel.TaskViewModel
+import com.esgi.todoapp.presentation.viewmodel.ThemeViewModel
 import com.esgi.todoapp.ui.theme.TodoDamienNithardTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,13 +23,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TodoDamienNithardTheme {
+            val themeViewModel: ThemeViewModel = hiltViewModel()
+            val isDarkTheme by themeViewModel.isDarkTheme.collectAsState()
+
+            TodoDamienNithardTheme(darkTheme = isDarkTheme) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val viewModel: TaskViewModel = hiltViewModel()
-                    TaskListScreen(viewModel = viewModel)
+                    val taskViewModel: TaskViewModel = hiltViewModel()
+                    TaskListScreen(
+                        viewModel = taskViewModel,
+                        isDarkTheme = isDarkTheme,
+                        onThemeToggle = themeViewModel::toggleTheme
+                    )
                 }
             }
         }

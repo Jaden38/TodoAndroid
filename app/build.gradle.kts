@@ -52,6 +52,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.datastore.preferences.core.jvm)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,4 +80,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.55")
     kapt("com.google.dagger:hilt-android-compiler:2.55")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
 }

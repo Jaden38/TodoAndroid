@@ -26,12 +26,15 @@ import androidx.compose.ui.Modifier
 import com.esgi.todoapp.domain.model.Task
 import com.esgi.todoapp.presentation.components.AddEditTaskDialog
 import com.esgi.todoapp.presentation.components.TaskItem
+import com.esgi.todoapp.presentation.components.ThemeToggle
 import com.esgi.todoapp.presentation.viewmodel.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskListScreen(
-    viewModel: TaskViewModel
+    viewModel: TaskViewModel,
+    isDarkTheme: Boolean,
+    onThemeToggle: () -> Unit
 ) {
     val tasks by viewModel.tasks.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
@@ -42,6 +45,13 @@ fun TaskListScreen(
             TopAppBar(
                 title = { Text(text = "To-Do App") },
                 actions = {
+                    // Theme toggle button
+                    ThemeToggle(
+                        isDarkTheme = isDarkTheme,
+                        onToggle = onThemeToggle
+                    )
+
+                    // Delete all tasks button
                     IconButton(onClick = { viewModel.deleteAllTasks() }) {
                         Icon(
                             imageVector = Icons.Default.Delete,

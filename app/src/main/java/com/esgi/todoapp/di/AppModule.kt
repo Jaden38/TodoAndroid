@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.esgi.todoapp.data.dao.TaskDao
 import com.esgi.todoapp.data.database.TaskDatabase
+import com.esgi.todoapp.data.preferences.ThemePreferences
 import com.esgi.todoapp.data.repository.TaskRepositoryImpl
 import com.esgi.todoapp.domain.repository.TaskRepository
 import com.esgi.todoapp.domain.usecase.DeleteAllTasksUseCase
@@ -55,5 +56,11 @@ object AppModule {
             deleteTaskUseCase = DeleteTaskUseCase(repository),
             deleteAllTasksUseCase = DeleteAllTasksUseCase(repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideThemePreferences(@ApplicationContext context: Context): ThemePreferences {
+        return ThemePreferences(context)
     }
 }

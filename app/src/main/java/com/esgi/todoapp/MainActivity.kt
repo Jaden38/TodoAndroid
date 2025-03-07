@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.esgi.todoapp.presentation.screens.TaskListScreen
+import com.esgi.todoapp.presentation.viewmodel.TagViewModel
 import com.esgi.todoapp.presentation.viewmodel.TaskViewModel
 import com.esgi.todoapp.presentation.viewmodel.ThemeViewModel
 import com.esgi.todoapp.ui.theme.TodoDamienNithardTheme
@@ -32,8 +33,11 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val taskViewModel: TaskViewModel = hiltViewModel()
+                    val tagViewModel: TagViewModel = hiltViewModel()
+
                     TaskListScreen(
                         viewModel = taskViewModel,
+                        tagViewModel = tagViewModel,
                         isDarkTheme = isDarkTheme,
                         onThemeToggle = themeViewModel::toggleTheme
                     )

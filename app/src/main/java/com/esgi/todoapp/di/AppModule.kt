@@ -13,6 +13,7 @@ import com.esgi.todoapp.domain.usecase.GetAllTasksUseCase
 import com.esgi.todoapp.domain.usecase.InsertTaskUseCase
 import com.esgi.todoapp.domain.usecase.TaskUseCases
 import com.esgi.todoapp.domain.usecase.UpdateTaskUseCase
+import com.esgi.todoapp.presentation.viewmodel.TagViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,6 +28,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideTaskDatabase(@ApplicationContext context: Context): TaskDatabase {
+        context.deleteDatabase("task_database")
         return Room.databaseBuilder(
             context,
             TaskDatabase::class.java,
@@ -62,5 +64,11 @@ object AppModule {
     @Singleton
     fun provideThemePreferences(@ApplicationContext context: Context): ThemePreferences {
         return ThemePreferences(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTagViewModel(): TagViewModel {
+        return TagViewModel()
     }
 }

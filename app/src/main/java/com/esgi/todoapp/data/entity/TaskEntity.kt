@@ -11,23 +11,34 @@ data class TaskEntity(
     val id: Int = 0,
     val title: String,
     val description: String,
-    val creationDate: Long
+    val creationDate: Long,
+    val tags: String = ""
 )
 
 fun TaskEntity.toTask(): Task {
+    val tagList = if (this.tags.isNotEmpty()) {
+        this.tags.split(",").map { it.trim() }
+    } else {
+        emptyList()
+    }
+
     return Task(
         id = this.id,
         title = this.title,
         description = this.description,
-        creationDate = Date(this.creationDate)
+        creationDate = Date(this.creationDate),
+        tags = tagList
     )
 }
 
 fun Task.toTaskEntity(): TaskEntity {
+    val tagsString = this.tags.joinToString(",")
+
     return TaskEntity(
         id = this.id,
         title = this.title,
         description = this.description,
-        creationDate = this.creationDate.time
+        creationDate = this.creationDate.time,
+        tags = tagsString
     )
 }

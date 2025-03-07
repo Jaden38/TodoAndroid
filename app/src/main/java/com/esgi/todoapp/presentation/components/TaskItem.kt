@@ -1,7 +1,10 @@
 package com.esgi.todoapp.presentation.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,11 +28,13 @@ import com.esgi.todoapp.domain.model.Task
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TaskItem(
     task: Task,
     onDelete: () -> Unit,
-    onEdit: () -> Unit
+    onEdit: () -> Unit,
+    onTagClick: (String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -69,6 +74,26 @@ fun TaskItem(
                 modifier = Modifier.padding(top = 8.dp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            // Display tags if present
+            if (task.tags.isNotEmpty()) {
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    task.tags.forEach { tag ->
+                        TagChip(
+                            tag = tag,
+                            isSelected = false,
+                            onClick = { onTagClick(tag) }
+                        )
+                    }
+                }
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -86,7 +111,6 @@ fun TaskItem(
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
-
 
                 IconButton(onClick = onDelete) {
                     Icon(
